@@ -8,16 +8,13 @@ import sys
 import time
 import RPi.GPIO as GPIO
 
-GPIO_PORT=26
-I2C_ADDR=0x36
-
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(GPIO_PORT, GPIO.OUT)
+GPIO.setup(13, GPIO.OUT)
 GPIO.setwarnings(False)
 
 def readVoltage(bus):
 
-     address = I2C_ADDR
+     address = 0x36
      read = bus.read_word_data(address, 2)
      swapped = struct.unpack("<H", struct.pack(">H", read))[0]
      voltage = swapped * 1.25 /1000/16
@@ -26,7 +23,7 @@ def readVoltage(bus):
 
 def readCapacity(bus):
 
-     address = I2C_ADDR
+     address = 0x36
      read = bus.read_word_data(address, 4)
      swapped = struct.unpack("<H", struct.pack(">H", read))[0]
      capacity = swapped/256
@@ -49,12 +46,13 @@ while True:
 
 #Set battery low voltage to shut down
  if readVoltage(bus) < 3.00:
+
          print ("Battery LOW!!!")
          print ("Shutdown in 10 seconds")
          time.sleep(10)
-         GPIO.output(GPIO_PORT, GPIO.HIGH)
+         GPIO.output(13, GPIO.HIGH)
          time.sleep(3)
-         GPIO.output(GPIO_PORT, GPIO.LOW)
+         GPIO.output(13, GPIO.LOW)
 
  time.sleep(2)
 
