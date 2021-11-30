@@ -96,16 +96,16 @@ def readCapacity(bus):
 bus = smbus.SMBus(1) # 0 = /dev/i2c-0 (port I2C0), 1 = /dev/i2c-1 (port I2C1)
 
 while True:
- print "******************"
- print "Voltage:%5.2fV" % readVoltage(bus)
- print "Battery:%5i%%" % readCapacity(bus)
+ print ("******************")
+ print ("Voltage:%5.2fV" % readVoltage(bus))
+ print ("Battery:%5i%%" % readCapacity(bus))
 
  if readCapacity(bus) == 100:
-         print "Battery FULL"
+         print ("Battery FULL")
 
  if readCapacity(bus) < 20:
-         print "Battery LOW"
- print "******************"
+         print ("Battery LOW")
+ print ("******************")
  time.sleep(2)
 ' > /home/pi/x708bat.py
 sudo chmod +x /home/pi/x708bat.py
@@ -122,16 +122,16 @@ GPIO.setup(6, GPIO.IN)
 
 def my_callback(channel):
     if GPIO.input(6):     # if port 6 == 1
-        print "---AC Power Loss OR Power Adapter Failure---"
+        print ("---AC Power Loss OR Power Adapter Failure---")
     else:                  # if port 6 != 1
-        print "---AC Power OK,Power Adapter OK---"
+        print ("---AC Power OK,Power Adapter OK---")
 
 GPIO.add_event_detect(6, GPIO.BOTH, callback=my_callback)
 
-print "1.Make sure your power adapter is connected"
-print "2.Disconnect and connect the power adapter to test"
-print "3.When power adapter disconnected, you will see: AC Power Loss or Power Adapter Failure"
-print "4.When power adapter reconnected, you will see: AC Power OK, Power Adapter OK"
+print ("1.Make sure your power adapter is connected")
+print ("2.Disconnect and connect the power adapter to test")
+print ("3.When power adapter disconnected, you will see: AC Power Loss or Power Adapter Failure")
+print ("4.When power adapter reconnected, you will see: AC Power OK, Power Adapter OK")
 
 raw_input("Testing Started")
 ' > /home/pi/x708pld.py
