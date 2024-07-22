@@ -8,17 +8,13 @@ echo '#!/bin/bash
 SHUTDOWN=5
 REBOOTPULSEMINIMUM=200
 REBOOTPULSEMAXIMUM=600
-echo "$SHUTDOWN" > /sys/class/gpio/export
-echo "in" > /sys/class/gpio/gpio$SHUTDOWN/direction
 BOOT=12
-echo "$BOOT" > /sys/class/gpio/export
-echo "out" > /sys/class/gpio/gpio$BOOT/direction
-echo "1" > /sys/class/gpio/gpio$BOOT/value
+gpioset gpiochip0 $BOOT=1
 
-echo "X708 Shutting down..."
+echo "X708 Script running..."
 
 while [ 1 ]; do
-  shutdownSignal=$(cat /sys/class/gpio/gpio$SHUTDOWN/value)
+  shutdownSignal=$(gpioget gpiochip0 $SHUTDOWN)
   if [ $shutdownSignal = 0 ]; then
     /bin/sleep 0.2
   else
@@ -30,7 +26,7 @@ while [ 1 ]; do
         sudo poweroff
         exit
       fi
-      shutdownSignal=$(cat /sys/class/gpio/gpio$SHUTDOWN/value)
+      shutdownSignal=$(gpioget gpiochip0 $SHUTDOWN)
     done
     if [ $(($(date +%s%N | cut -b1-13)-$pulseStart)) -gt $REBOOTPULSEMINIMUM ]; then
       echo "X708 Rebooting", SHUTDOWN, ", recycling Rpi ..."
@@ -50,9 +46,7 @@ echo '#!/bin/bash
 
 BUTTON=13
 
-echo "$BUTTON" > /sys/class/gpio/export;
-echo "out" > /sys/class/gpio/gpio$BUTTON/direction
-echo "1" > /sys/class/gpio/gpio$BUTTON/value
+gpioset gpiochip0 $BUTTON=1
 
 SLEEP=${1:-4}
 
@@ -65,7 +59,7 @@ echo "X708 Shutting down..."
 /bin/sleep $SLEEP
 
 #restore GPIO 13
-echo "0" > /sys/class/gpio/gpio$BUTTON/value
+gpioset gpiochip0 $BUTTON=0
 ' > /usr/local/bin/x708softsd.sh
 sudo chmod +x /usr/local/bin/x708softsd.sh
 
